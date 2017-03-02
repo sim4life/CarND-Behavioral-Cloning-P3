@@ -7,8 +7,9 @@ from keras.layers import Flatten, Dense
 
 lines = []
 with open('./data/driving_log.csv') as csv_file:
-    reader = csv.reader(csv_file)
-    for line in reader:
+    csv_reader = csv.reader(csv_file)
+    next(csv_reader)
+    for line in csv_reader:
         lines.append(line)
 
 
@@ -16,8 +17,7 @@ images = []
 measurements = []
 for line in lines:
     source_path = line[0]
-    file_name = source_path.split('/')[-1]
-    current_path = './data/IMG/'+file_name
+    current_path = './data/' + source_path
     image = cv2.imread(current_path)
     images.append(image)
     measurement = float(line[3])
@@ -30,7 +30,7 @@ model = Sequential()
 model.add(Flatten(input_shape=(160,320,3)))
 model.add(Dense(1))
 
-model.complie(loss='mse', optimizer='adam')
+model.compile(loss='mse', optimizer='adam')
 model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=10)
 
 model.save('model.h5')
