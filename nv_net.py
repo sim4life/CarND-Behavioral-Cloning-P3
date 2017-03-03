@@ -48,6 +48,7 @@ y_train = np.array(augmented_measurements)
 
 # row, col, ch = 160, 320, 3  # Raw image format
 row, col, ch = 160 - top_crop - bot_crop, 320, 3  # Trimmed image format
+print("row={}, col={}, ch={}".format(row,col,ch))
 
 model = Sequential()
 # model.add(Lambda(lambda x: (x/255.0) - 0.5, input_shape=(row,col,ch)))
