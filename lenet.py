@@ -19,7 +19,7 @@ images = []
 measurements = []
 for line in lines:
     for i in range(3):
-        source_path = line[0]
+        source_path = line[i]
         file_name = source_path.split('/')[-1]
         current_path = './data/IMG/' + file_name
         # current_path = './data/' + source_path
