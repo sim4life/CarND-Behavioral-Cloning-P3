@@ -10,33 +10,29 @@ from keras.layers.pooling import MaxPooling2D
 lines = []
 with open('./data/driving_log.csv') as csv_file:
     csv_reader = csv.reader(csv_file)
-    next(csv_reader)
+    # next(csv_reader)
     for line in csv_reader:
         lines.append(line)
 
 
 correction = 0.2 # this is a parameter to tune
-
+img_path = './data/IMG/'
 images = []
 measurements = []
 for line in lines:
-    for i in range(3):
-        source_path = line[i]
-        file_name = source_path.split('/')[-1]
-        current_path = './data/IMG/' + file_name
-        # current_path = './data/' + source_path
-        image = cv2.imread(current_path)
-        images.append(image)
-        # measurement = float(line[3])
-        # measurements.append(measurement)
+    file_name = line[0].split('/')[-1] # centre img
+    images.append(cv2.imread(img_path + file_name))
+    file_name = line[1].split('/')[-1] # left img
+    images.append(cv2.imread(img_path + file_name))
+    file_name = line[2].split('/')[-1] # right img
+    images.append(cv2.imread(img_path + file_name))
 
     steering_center = float(line[3])
-
     # create adjusted steering measurements for the side camera images
     steering_left = steering_center + correction
     steering_right = steering_center - correction
 
-    measurements.extend((steering_center, steering_left, steering_right))
+    measurements.extend([steering_center, steering_left, steering_right])
 
 augmented_images, augmented_measurements = [], []
 for image, measurement in zip(images, measurements):
