@@ -66,11 +66,11 @@ train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
 
 # row, col, ch = 160 - top_crop - bot_crop, 320, 3  # Trimmed image format
-ch, row, col = 3, 80, 320  # Trimmed image format
+row, col, ch = 160, 320, 3  # Trimmed image format
 
 model = Sequential()
-model.add(Lambda(lambda x: (x/127.5) - 1., input_shape=(ch, row, col), output_shape=(ch, row, col)))
-model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(ch,row,col)))
+model.add(Lambda(lambda x: (x/127.5) - 1., input_shape=(row,col,ch), output_shape=(row,col,ch)))
+model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(row,col,ch)))
 model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
 model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
 model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
