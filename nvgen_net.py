@@ -2,6 +2,7 @@ import csv
 import cv2
 import numpy as np
 import sklearn
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
@@ -10,8 +11,14 @@ from keras.layers import Flatten, Dense, Lambda, Cropping2D
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 
+
+flags = tf.app.flags
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string('data_path', './data', "The path to dataset.")
+
 samples = []
-with open('./data/driving_log.csv') as csv_file:
+with open(FLAGS.data_path+'/driving_log.csv') as csv_file:
     csv_reader = csv.reader(csv_file)
     next(csv_reader) # to skip header row in original data csv
     for line in csv_reader:
@@ -24,7 +31,7 @@ train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 correction      = 0.2 # this is a parameter to tune
 top_crop        = 70
 bot_crop        = 25
-img_path        = './data/IMG/'
+img_path        = FLAGS.data_path + '/IMG/'
 
 def generator(samples, batch_size=32):
     num_samples = len(samples)
