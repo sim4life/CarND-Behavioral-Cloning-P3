@@ -10,7 +10,7 @@ from keras.layers.pooling import MaxPooling2D
 lines = []
 with open('./data/driving_log.csv') as csv_file:
     csv_reader = csv.reader(csv_file)
-    # next(csv_reader)
+    next(csv_reader) # to skip header row in original data csv
     for line in csv_reader:
         lines.append(line)
 
