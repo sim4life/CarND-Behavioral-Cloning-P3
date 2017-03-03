@@ -36,7 +36,7 @@ for line in lines:
     steering_left = steering_center + correction
     steering_right = steering_center - correction
 
-    measurements.extend(steering_center, steering_left, steering_right)
+    measurements.extend((steering_center, steering_left, steering_right))
 
 augmented_images, augmented_measurements = [], []
 for image, measurement in zip(images, measurements):
