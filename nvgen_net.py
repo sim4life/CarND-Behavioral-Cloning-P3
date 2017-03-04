@@ -68,7 +68,7 @@ def generator(samples, batch_size=32):
             base_path = FLAGS.data_path.rstrip('\/') + '/'
             for batch_sample in batch_samples:
                 half_path = get_last_half_path(batch_sample[0]) # centre img
-                print("Reading img={}".format(base_path + half_path))
+                # print("Reading img={}".format(base_path + half_path))
                 # image_path = FLAGS.data_path + '/' + half_path
                 # file_name = batch_sample[0].split('/')[-1] # centre img
                 images.append(cv2.imread(base_path + half_path))
@@ -84,19 +84,19 @@ def generator(samples, batch_size=32):
 
                 angles.extend([center_angle, left_angle, right_angle])
 
-            print("number of images are={}".format(len(images)))
+            # print("number of images are={}".format(len(images)))
             for image, angle in zip(images, angles):
                 augmented_images.append(image)
                 augmented_angles.append(angle)
                 augmented_images.append(cv2.flip(image, 1))
                 augmented_angles.append(angle*-1.0)
 
-            print("number of aug images are={}".format(len(augmented_images)))
+            # print("number of aug images are={}".format(len(augmented_images)))
             # trim image to only see section with road
             X_train = np.array(augmented_images)
             y_train = np.array(augmented_angles)
-            print("X_train.shape is=", X_train.shape)
-            print("y_train.shape is=", y_train.shape)
+            # print("X_train.shape is=", X_train.shape)
+            # print("y_train.shape is=", y_train.shape)
             yield shuffle(X_train, y_train)
 
 def main(_):
