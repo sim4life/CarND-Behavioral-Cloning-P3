@@ -37,7 +37,9 @@ def load_data_samples():
         print("Reading ={}".format(log+'/driving_log.csv'))
         with open(log+'/driving_log.csv') as csv_file:
             csv_reader = csv.reader(csv_file)
-            # next(csv_reader) # to skip header row in original data csv
+            line1 = next(csv_reader) # to skip header row in original data csv
+            if line1[0].find('/') is not -1:
+                samples.append(line1) # don't ignore if a valid row
             for line in csv_reader:
                 samples.append(line)
 
@@ -47,8 +49,8 @@ def load_data_samples():
     return train_samples, validation_samples
 
 def get_last_half_path(full_path):
-    last_dir = FLAGS.data_path.rstrip('\/').split('/')[-1]
-    return full_path.split(last_dir)[-1]
+    last_dir = FLAGS.data_path.strip().rstrip('\/').split('/')[-1].strip()
+    return full_path.split(last_dir)[-1].strip()
 
 correction      = 0.2 # this is a parameter to tune
 top_crop        = 70
@@ -65,10 +67,9 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             augmented_images, augmented_angles = [], []
-            base_path = FLAGS.data_path.rstrip('\/') + '/'
+            base_path = FLAGS.data_path.strip().rstrip('\/') + '/'
             for batch_sample in batch_samples:
                 half_path = get_last_half_path(batch_sample[0]) # centre img
-                # print("Reading img={}".format(base_path + half_path))
                 # image_path = FLAGS.data_path + '/' + half_path
                 # file_name = batch_sample[0].split('/')[-1] # centre img
                 images.append(cv2.imread(base_path + half_path))
@@ -84,19 +85,15 @@ def generator(samples, batch_size=32):
 
                 angles.extend([center_angle, left_angle, right_angle])
 
-            # print("number of images are={}".format(len(images)))
             for image, angle in zip(images, angles):
                 augmented_images.append(image)
                 augmented_angles.append(angle)
                 augmented_images.append(cv2.flip(image, 1))
                 augmented_angles.append(angle*-1.0)
 
-            # print("number of aug images are={}".format(len(augmented_images)))
             # trim image to only see section with road
             X_train = np.array(augmented_images)
             y_train = np.array(augmented_angles)
-            # print("X_train.shape is=", X_train.shape)
-            # print("y_train.shape is=", y_train.shape)
             yield shuffle(X_train, y_train)
 
 def main(_):
