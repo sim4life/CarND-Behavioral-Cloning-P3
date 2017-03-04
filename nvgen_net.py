@@ -1,5 +1,6 @@
 import csv
 import cv2
+import os
 import numpy as np
 import sklearn
 import tensorflow as tf
@@ -16,22 +17,43 @@ flags = tf.app.flags
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('data_path', './data', "The path to dataset.")
+# flags.DEFINE_integer('data_count', 1, "The number of datasets.")
 
-samples = []
-with open(FLAGS.data_path+'/driving_log.csv') as csv_file:
-    csv_reader = csv.reader(csv_file)
-    next(csv_reader) # to skip header row in original data csv
-    for line in csv_reader:
-        samples.append(line)
+def get_immediate_subdirs(a_dir):
+    return [name for name in os.listdir(a_dir) if os.path.isdir(os.path.join(a_dir, name))]
 
+def load_data_samples():
+    log_file_paths = []
+    file_paths = get_immediate_subdirs(FLAGS.data_path)
+    if len(file_paths) > 1:
+        for p in file_paths:
+            log_file_paths.append(FLAGS.data_path+'/'+p)
+    else:
+        log_file_paths = [FLAGS.data_path]
 
-train_samples, validation_samples = train_test_split(samples, test_size=0.2)
+    print("data files are: =", log_file_paths)
+    samples = []
+    for log in log_file_paths:
+        print("Reading ={}".format(log+'/driving_log.csv'))
+        with open(log+'/driving_log.csv') as csv_file:
+            csv_reader = csv.reader(csv_file)
+            # next(csv_reader) # to skip header row in original data csv
+            for line in csv_reader:
+                samples.append(line)
 
+            print("sample size is: {}".format(len(samples)))
+
+    train_samples, validation_samples = train_test_split(samples, test_size=0.2)
+    return train_samples, validation_samples
+
+def get_last_half_path(full_path):
+    last_dir = FLAGS.data_path.rstrip('\/').split('/')[-1]
+    return full_path.split(last_dir)[-1]
 
 correction      = 0.2 # this is a parameter to tune
 top_crop        = 70
 bot_crop        = 25
-img_path        = FLAGS.data_path + '/IMG/'
+# img_path        = FLAGS.data_path + '/IMG/'
 
 def generator(samples, batch_size=32):
     num_samples = len(samples)
@@ -43,13 +65,17 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             augmented_images, augmented_angles = [], []
+            base_path = FLAGS.data_path.rstrip('\/') + '/'
             for batch_sample in batch_samples:
-                file_name = batch_sample[0].split('/')[-1] # centre img
-                images.append(cv2.imread(img_path + file_name))
-                file_name = batch_sample[1].split('/')[-1] # left img
-                images.append(cv2.imread(img_path + file_name))
-                file_name = batch_sample[2].split('/')[-1] # right img
-                images.append(cv2.imread(img_path + file_name))
+                half_path = get_last_half_path(batch_sample[0]) # centre img
+                print("Reading img={}".format(base_path + half_path))
+                # image_path = FLAGS.data_path + '/' + half_path
+                # file_name = batch_sample[0].split('/')[-1] # centre img
+                images.append(cv2.imread(base_path + half_path))
+                half_path = get_last_half_path(batch_sample[1]) # left img
+                images.append(cv2.imread(base_path + half_path))
+                half_path = get_last_half_path(batch_sample[2]) # right img
+                images.append(cv2.imread(base_path + half_path))
 
                 center_angle = float(batch_sample[3])
                 # create adjusted steering measurements for the side camera images
@@ -58,42 +84,56 @@ def generator(samples, batch_size=32):
 
                 angles.extend([center_angle, left_angle, right_angle])
 
+            print("number of images are={}".format(len(images)))
             for image, angle in zip(images, angles):
                 augmented_images.append(image)
                 augmented_angles.append(angle)
                 augmented_images.append(cv2.flip(image, 1))
                 augmented_angles.append(angle*-1.0)
 
+            print("number of aug images are={}".format(len(augmented_images)))
             # trim image to only see section with road
             X_train = np.array(augmented_images)
             y_train = np.array(augmented_angles)
+            print("X_train.shape is=", X_train.shape)
+            print("y_train.shape is=", y_train.shape)
             yield shuffle(X_train, y_train)
 
-# compile and train the model using the generator function
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+def main(_):
+    print("data_path=", FLAGS.data_path)
+    # print("data_count=", FLAGS.data_count)
 
-# row, col, ch = 160 - top_crop - bot_crop, 320, 3  # Trimmed image format
-row, col, ch = 160, 320, 3  # Trimmed image format
+    train_samples, validation_samples = load_data_samples()
+    # compile and train the model using the generator function
+    train_generator = generator(train_samples, batch_size=32)
+    validation_generator = generator(validation_samples, batch_size=32)
 
-model = Sequential()
-model.add(Lambda(lambda x: (x/127.5) - 1., input_shape=(row,col,ch), output_shape=(row,col,ch)))
-model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(row,col,ch)))
-model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
-model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
-model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
-model.add(Convolution2D(64,3,3, activation="relu"))
-model.add(Convolution2D(64,3,3, activation="relu"))
-model.add(Flatten())
-model.add(Dense(100))
-model.add(Dense(50))
-model.add(Dense(10))
-model.add(Dense(1))
+    # row, col, ch = 160 - top_crop - bot_crop, 320, 3  # Trimmed image format
+    row, col, ch = 160, 320, 3  # Trimmed image format
 
-model.compile(loss='mse', optimizer='adam')
-# model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=7)
-model.fit_generator(train_generator, samples_per_epoch=len(train_samples), \
-            validation_data=validation_generator, \
-            nb_val_samples=len(validation_samples), nb_epoch=7)
+    model = Sequential()
+    model.add(Lambda(lambda x: (x/127.5) - 1., input_shape=(row,col,ch), output_shape=(row,col,ch)))
+    model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(row,col,ch)))
+    model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(64,3,3, activation="relu"))
+    model.add(Convolution2D(64,3,3, activation="relu"))
+    model.add(Flatten())
+    model.add(Dense(100))
+    model.add(Dense(50))
+    model.add(Dense(10))
+    model.add(Dense(1))
 
-model.save('model_nvgen.h5')
+    model.compile(loss='mse', optimizer='adam')
+    # model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=7)
+    model.fit_generator(train_generator, samples_per_epoch=len(train_samples), \
+                validation_data=validation_generator, \
+                nb_val_samples=len(validation_samples), nb_epoch=7)
+
+    model.save('model_nvgen.h5')
+
+
+# parses flags and calls the `main` function above
+if __name__ == '__main__':
+    tf.app.run()
