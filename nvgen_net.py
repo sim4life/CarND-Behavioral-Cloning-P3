@@ -50,8 +50,6 @@ def load_data_samples():
 
 def get_last_half_path(full_path):
     last_dir = FLAGS.data_path.strip().rstrip('\/').split('/')[-1].strip()
-    print("last_dir :{}:".format(last_dir))
-    print("half_path :{}:".format(full_path.split(last_dir)[-1]))
     return full_path.split(last_dir)[-1].strip()
 
 correction      = 0.2 # this is a parameter to tune
@@ -72,15 +70,12 @@ def generator(samples, batch_size=32):
             base_path = FLAGS.data_path.strip().rstrip('\/') + '/'
             for batch_sample in batch_samples:
                 half_path = get_last_half_path(batch_sample[0]) # centre img
-                print("Reading img={} isFile={}".format((base_path + half_path), os.path.isfile(base_path + half_path) ))
                 # image_path = FLAGS.data_path + '/' + half_path
                 # file_name = batch_sample[0].split('/')[-1] # centre img
                 images.append(cv2.imread(base_path + half_path))
                 half_path = get_last_half_path(batch_sample[1]) # left img
-                print("Reading img={} isFile={}".format((base_path + half_path), os.path.isfile(base_path + half_path) ))
                 images.append(cv2.imread(base_path + half_path))
                 half_path = get_last_half_path(batch_sample[2]) # right img
-                print("Reading img={} isFile={}".format((base_path + half_path), os.path.isfile(base_path + half_path) ))
                 images.append(cv2.imread(base_path + half_path))
 
                 center_angle = float(batch_sample[3])
@@ -90,32 +85,15 @@ def generator(samples, batch_size=32):
 
                 angles.extend([center_angle, left_angle, right_angle])
 
-            print("number of images are={}".format(len(images)))
             for image, angle in zip(images, angles):
                 augmented_images.append(image)
                 augmented_angles.append(angle)
                 augmented_images.append(cv2.flip(image, 1))
                 augmented_angles.append(angle*-1.0)
 
-            print("number of aug images are={}".format(len(augmented_images)))
             # trim image to only see section with road
             X_train = np.array(augmented_images)
             y_train = np.array(augmented_angles)
-            for i in range(len(images)):
-                print("images[{}] type is={}".format(i, type(images[i])))
-
-            for i in range(len(augmented_images)):
-                print("augmented_images[{}] type is={}".format(i, type(augmented_images[i])))
-
-            print("X_train.shape is=", X_train.shape)
-            print("X_train[0].shape is=", X_train[0].shape)
-            print("X_train len is=", len(X_train))
-            print("X_train dtype is=", X_train.dtype)
-            print("y_train.shape is=", y_train.shape)
-            for k in range(len(X_train)):
-                print("X_train[{}] type is={}".format(k, type(X_train[k])))
-                print("X_train[{}].dtype is={}".format(k, X_train[k].dtype))
-                print("X_train[{}].shape is={}".format(k, X_train[k].shape))
             yield shuffle(X_train, y_train)
 
 def main(_):
