@@ -112,8 +112,8 @@ def main(_):
     # Setting up nVidia ConvNet for training
     model = Sequential()
     # normalizing training images
-    model.add(Lambda(lambda x: (x/127.5) - 1., input_shape=(row,col,ch), output_shape=(row,col,ch)))
-    # model.add(Lambda(lambda x: (x/255.0) - 0.5, input_shape=(row,col,ch), output_shape=(row,col,ch)))
+    # model.add(Lambda(lambda x: (x/127.5) - 1., input_shape=(row,col,ch), output_shape=(row,col,ch)))
+    model.add(Lambda(lambda x: (x/255.0) - 0.5, input_shape=(row,col,ch), output_shape=(row,col,ch)))
     # trim image to only see section with road
     model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(row,col,ch)))
     model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))

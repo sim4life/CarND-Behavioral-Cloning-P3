@@ -8,3 +8,5 @@ data.zip
 run1
 *.h5
 !model.h5
+video*.mp4
+!video.mp4
