@@ -56,7 +56,8 @@ def get_last_half_path(full_path):
 correction      = 0.2 # this is a parameter to tune
 top_crop        = 70
 bot_crop        = 25
-y_corrective_ratio = 0.6
+y_corrective_ratio = 0.4
+angle_corrective_mul = 2
 # corrective_angle = (-0.5, 0.5)
 
 def get_corrective_sample_indices(total):
@@ -88,7 +89,7 @@ def generator(samples, batch_size=32):
                 center_angle = float(batch_sample[3])
                 if i in corrective_sample_idcs:
                     if abs(center_angle) < 0.5:
-                        center_angle *= center_angle
+                        center_angle = angle_corrective_mul * center_angle
                 # create adjusted steering measurements for the side camera images
                 left_angle = center_angle + correction
                 right_angle = center_angle - correction
@@ -136,7 +137,7 @@ def main(_):
     # model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=7)
     model.fit_generator(train_generator, samples_per_epoch=len(train_samples), \
                 validation_data=validation_generator, \
-                nb_val_samples=len(validation_samples), nb_epoch=7)
+                nb_val_samples=len(validation_samples), nb_epoch=5)
 
     model.save('model_nvgen_corr.h5')
 
