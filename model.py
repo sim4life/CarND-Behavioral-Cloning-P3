@@ -59,7 +59,7 @@ def get_last_half_path(full_path):
 correction      = 0.2 # this is for image left and right correction
 top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
-dropout_rate    = 0.2
+dropout_rate    = 0.8
 pool_size       = (2, 2)
 
 # Generator funciton to work on batch of samples
