@@ -7,6 +7,6 @@ data_track
 data.zip
 run1
 *.h5
-#!model.h5
+!model2.h5
 video*.mp4
 !video.mp4
