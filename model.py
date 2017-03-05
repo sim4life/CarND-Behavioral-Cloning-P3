@@ -61,9 +61,10 @@ correction      = 0.2 # this is for image left and right correction
 top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
 dropout_rate    = 0.2
-pool_size       = (2, 2)
+# pool_size       = (2, 2)
 y_corrective_ratio = 0.4
-corrective_angle = (-0.5, 0.5)
+angle_corrective_mul = 2
+# corrective_angle = (-0.5, 0.5)
 
 def get_corrective_sample_indices(total):
     k = int(total * y_corrective_ratio)
@@ -130,18 +131,18 @@ def main(_):
     # model.add(Lambda(lambda x: (x/255.0) - 0.5, input_shape=(row,col,ch), output_shape=(row,col,ch)))
     # trim image to only see section with road
     model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(row,col,ch)))
-    model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
-    # model.add(Convolution2D(24,5,5, subsample=(2,2)))
-    # model.add(Dropout(dropout_rate))
-    # model.add(Activation('relu'))
-    model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
-    # model.add(Convolution2D(36,5,5, subsample=(2,2)))
-    # model.add(Dropout(dropout_rate))
-    # model.add(Activation('relu'))
-    model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
-    # model.add(Convolution2D(48,5,5, subsample=(2,2)))
-    # model.add(Dropout(dropout_rate))
-    # model.add(Activation('relu'))
+    # model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(24,5,5, subsample=(2,2)))
+    model.add(Dropout(dropout_rate))
+    model.add(Activation('relu'))
+    # model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(36,5,5, subsample=(2,2)))
+    model.add(Dropout(dropout_rate))
+    model.add(Activation('relu'))
+    # model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(48,5,5, subsample=(2,2)))
+    model.add(Dropout(dropout_rate))
+    model.add(Activation('relu'))
     model.add(Convolution2D(64,3,3, activation="relu"))
     model.add(Convolution2D(64,3,3, activation="relu"))
     model.add(Flatten())
