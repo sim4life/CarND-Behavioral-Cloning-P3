@@ -95,7 +95,7 @@ def generator(samples, batch_size=32):
                 if i in corrective_sample_idcs:
                     # center_angle = random.uniform(*corrective_angle)
                     if abs(center_angle) < 0.5:
-                        center_angle *= center_angle
+                        center_angle = angle_corrective_mul * center_angle
                 # create adjusted steering measurements for the side camera images
                 left_angle = center_angle + correction
                 right_angle = center_angle - correction
