@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Cropping2D
+from keras.layers import Flatten, Dense, Lambda, Cropping2D, Dropout
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 
@@ -59,7 +59,7 @@ def get_last_half_path(full_path):
 correction      = 0.2 # this is for image left and right correction
 top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
-dropout_rate    = 0.8
+dropout_rate    = 0.2
 
 # Generator funciton to work on batch of samples
 def generator(samples, batch_size=32):
