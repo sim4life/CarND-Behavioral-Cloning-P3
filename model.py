@@ -59,7 +59,7 @@ def get_last_half_path(full_path):
 correction      = 0.2 # this is for image left and right correction
 top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
-dropout_rate    = 0.8
+dropout_rate    = 0.2
 pool_size       = (2, 2)
 
 # Generator funciton to work on batch of samples
@@ -121,8 +121,12 @@ def main(_):
     model.add(Convolution2D(24,5,5, subsample=(2,2)))
     model.add(Dropout(dropout_rate))
     model.add(Activation('relu'))
-    model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
-    model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
+    model.add(Convolution2D(36,5,5, subsample=(2,2))
+    model.add(Dropout(dropout_rate))
+    model.add(Activation('relu'))
+    model.add(Convolution2D(48,5,5, subsample=(2,2))
+    model.add(Dropout(dropout_rate))
+    model.add(Activation('relu'))
     model.add(Convolution2D(64,3,3, activation="relu"))
     model.add(Convolution2D(64,3,3, activation="relu"))
     model.add(Flatten())
