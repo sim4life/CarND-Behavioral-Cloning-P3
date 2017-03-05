@@ -61,6 +61,12 @@ top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
 dropout_rate    = 0.2
 pool_size       = (2, 2)
+y_corrective_ratio = 0.2
+corrective_angle = (-1, 1)
+
+def get_corrective_sample_indices(total):
+    k = int(total * y_corrective_ratio)
+    return random.sample(range(total), k)
 
 # Generator funciton to work on batch of samples
 def generator(samples, batch_size=32):
@@ -74,7 +80,8 @@ def generator(samples, batch_size=32):
             angles = []
             augmented_images, augmented_angles = [], []
             base_path = FLAGS.data_path.strip().rstrip('\/') + '/'
-            for batch_sample in batch_samples:
+            corrective_sample_idcs = get_corrective_sample_indices(len(batch_samples))
+            for i, batch_sample in enumerate(batch_samples):
                 half_path = get_last_half_path(batch_sample[0]) # centre img
                 images.append(cv2.imread(base_path + half_path))
                 half_path = get_last_half_path(batch_sample[1]) # left img
@@ -83,6 +90,8 @@ def generator(samples, batch_size=32):
                 images.append(cv2.imread(base_path + half_path))
 
                 center_angle = float(batch_sample[3])
+                if i in corrective_sample_idcs:
+                    center_angle = random.uniform(*corrective_angle)
                 # create adjusted steering measurements for the side camera images
                 left_angle = center_angle + correction
                 right_angle = center_angle - correction
