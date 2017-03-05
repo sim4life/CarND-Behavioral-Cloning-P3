@@ -62,8 +62,8 @@ top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
 dropout_rate    = 0.2
 pool_size       = (2, 2)
-y_corrective_ratio = 0.2
-corrective_angle = (-1, 1)
+y_corrective_ratio = 0.4
+corrective_angle = (-0.5, 0.5)
 
 def get_corrective_sample_indices(total):
     k = int(total * y_corrective_ratio)
@@ -92,7 +92,9 @@ def generator(samples, batch_size=32):
 
                 center_angle = float(batch_sample[3])
                 if i in corrective_sample_idcs:
-                    center_angle = random.uniform(*corrective_angle)
+                    # center_angle = random.uniform(*corrective_angle)
+                    if abs(center_angle) < 0.5:
+                        center_angle *= center_angle
                 # create adjusted steering measurements for the side camera images
                 left_angle = center_angle + correction
                 right_angle = center_angle - correction
