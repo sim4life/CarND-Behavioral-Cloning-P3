@@ -58,7 +58,7 @@ top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
 dropout_rate    = 0.1 # dropout rate
 pool_size       = (2, 2) # max pooling size
-y_corrective_ratio = 0.4 # ratio of eligible y_train samples to be adjusted
+y_corrective_ratio = 0.6 # ratio of eligible y_train samples to be adjusted
 angle_corrective_mul = 2 # multiplier to adjust the eligible steering angles
 
 def get_corrective_sample_indices(total):
