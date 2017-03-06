@@ -56,11 +56,11 @@ The `model.py` file contains the code for training and saving the convolution ne
 
 I made use of the convolutional network presented by nVidia for autonomous cars.
 
-The model first normalizes the inputs with `(x/127.5) - 1.0` formula using Keras Lambda layer (model.py line123).  
-After that, my model crops the inputs from top by 70 pixels and bottom by 25 pixels. This vastly improves training the model as the top contains irrelevant scenery and bottom contains the hood of the car (model.py line 124).
-Next, the model consists of 3 convolution neural network layers with 5x5 filter sizes and depths between 24 and 48 (model.py lines 125-127). These layers have a stride of 2x2 and an activation function of ReLU.  
-After that, the model consists of 2 convolution neural network layers with 3x3 filter size and depth of 64 each (model.py lines 128-129). These layers also have an activation function of ReLU.  
-After that, the model flattens the inputs (model.py line 130). Lastly, the model runs 4 fully connected layers giving output depth of 100, 50, 10 and 1 (model.py lines 131-134)
+The model first normalizes the inputs with `(x/127.5) - 1.0` formula using Keras Lambda layer (model.py line120).  
+After that, my model crops the inputs from top by 70 pixels and bottom by 25 pixels. This vastly improves training the model as the top contains irrelevant scenery and bottom contains the hood of the car (model.py line 121).
+Next, the model consists of 3 convolution neural network layers with 5x5 filter sizes and depths between 24 and 48 (model.py lines 122-124). These layers have a stride of 2x2 and an activation function of ReLU.  
+After that, the model consists of 2 convolution neural network layers with 3x3 filter size and depth of 64 each (model.py lines 125-126). These layers also have an activation function of ReLU.  
+After that, the model flattens the inputs (model.py line 127). Lastly, the model runs 4 fully connected layers giving output depth of 100, 50, 10 and 1 (model.py lines 128-131)
 
 ####2. Attempts to reduce overfitting in the model
 
@@ -69,7 +69,7 @@ The model was trained and validated on different data sets to ensure that the mo
 
 ####3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 136).
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 133).
 
 ####4. Appropriate training data
 
@@ -92,7 +92,7 @@ Here is a diagram of that process
 
 ####2. Final Model Architecture
 
-The final model architecture (model.py lines 118-130) consisted of a convolution neural network with the following layers and layer sizes in the diagram below:
+The final model architecture (model.py lines 119-131) consisted of a convolution neural network with the following layers and layer sizes in the diagram below:
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
