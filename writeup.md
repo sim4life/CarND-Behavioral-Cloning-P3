@@ -112,9 +112,6 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 
 ![alt text][image4]
 
-After the collection process, I had 55992 number of data points. I then preprocessed this data by inflating 40% of the steering angles for straight driving, adding adjusted left and right camera angles, augmenting the data by flipping the images and their corresponding steering angles.
-
-
-I finally randomly shuffled the data set and put 20% of the data into a validation set. 
-
+After the collection process, I had 55992 number of data points. I then preprocessed this data by inflating (by a factor of 2) 40% of the steering angles of straight driving (-0.5 < angle < 0.5), adding adjusted left and right camera angles, augmenting the data by flipping the images and their corresponding steering angles.  
+I finally randomly shuffled the data set and put 20% of the data into a validation set.  
 I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5. I used an adam optimizer so that manually training the learning rate wasn't necessary.

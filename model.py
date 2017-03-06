@@ -69,7 +69,8 @@ def generator(samples, batch_size=32):
     while 1: # Loop forever so the generator never terminates
         for offset in range(0, num_samples, batch_size):
             batch_samples = samples[offset:offset+batch_size]
-
+            shuffle(batch_samples)
+            
             images = []
             angles = []
             augmented_images, augmented_angles = [], []
