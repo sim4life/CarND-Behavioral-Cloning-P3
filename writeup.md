@@ -23,7 +23,7 @@ The goals / steps of this project are the following:
 [image3]: ./examples/center_2017_02_24_22_48_25_534.jpg "Centre lane driving"
 [image4]: ./examples/center_2017_02_25_15_07_08_004.jpg "Reverse driving"
 [image5]: ./examples/center_2017_02_25_15_00_25_816.jpg "Recovery Image"
-[image6]: ./examples/center_2017_02_24_22_47_40_444.jpg "Recovery Image"
+[image6]: ./examples/center_2017_02_25_15_01_13_151.jpg "Recovery Image"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -37,6 +37,7 @@ My project includes the following files:
 * `model.py` containing the script to create and train the model  
 * `drive.py` for driving the car in autonomous mode  
 * `model.h5` containing a trained convolution neural network   
+* `video.mp4` containing the video of driving the car in autonomous mode
 * `writeup.md` summarizing the results
 
 ####2. Submission includes functional code
@@ -81,7 +82,7 @@ For details about how I created the training data, see the next section.
 ####1. Solution Design Approach
 
 The overall strategy for deriving a model architecture was to create a basic LeNet-5 and train the model on Udacity provided sample dataset to consider it as a baseline to judge improvements.  
-Later on, I employed various models, including LeNet-5, nVidia CNN, nVidia CNN with dropouts etc. In all the models, I found both the training error and validation error to be low.  However I found out that classic nVidia model performed better than others.  
+Later on, I employed various models, including LeNet-5, nVidia CNN, nVidia CNN with dropouts etc. In all the models, I found both the training error and validation error to be low.  However I found out that classic nVidia model performed better than others in driving the car in autonomous mode.  
 The final step was to run the simulator to see how well the car was driving around track 1. There was one particular spot, the left turn right after the bridge, where the vehicle fell off the track. To improve the driving behavior in this and other cases, I put more emphasis on capturing quality data, doing dataset correction and dataset augmentation. These techniques made the trained model drive the car far better.  
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
@@ -112,6 +113,6 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 
 ![alt text][image4]
 
-After the collection process, I had 55992 number of data points. I then preprocessed this data by inflating (by a factor of 2) 40% of the steering angles of straight driving (-0.5 < angle < 0.5), adding adjusted left and right camera angles, augmenting the data by flipping the images and their corresponding steering angles.  
+After the collection process, I had 23622 number of data points. I then preprocessed this data by inflating (by a factor of 2) 40% of the steering angles of straight driving (-0.5 < angle < 0.5), adding adjusted left and right camera angles, augmenting the data by flipping the images and their corresponding steering angles.  
 I finally randomly shuffled the data set and put 20% of the data into a validation set.  
 I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5. I used an adam optimizer so that manually training the learning rate wasn't necessary.

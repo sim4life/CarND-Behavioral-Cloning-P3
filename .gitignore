@@ -5,8 +5,7 @@ data_new
 data_orig
 data_track
 data.zip
-run1
-run2
+run*
 *.h5
 !model.h5
 video*.mp4
