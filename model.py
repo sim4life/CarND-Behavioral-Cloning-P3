@@ -56,7 +56,7 @@ def get_last_half_path(full_path):
 correction      = 0.2 # this is a parameter to tune
 top_crop        = 70 # cropping image from above
 bot_crop        = 25 # cropping image from below
-dropout_rate    = 0.2 # dropout rate
+dropout_rate    = 0.1 # dropout rate
 pool_size       = (2, 2) # max pooling size
 y_corrective_ratio = 0.4 # ratio of eligible y_train samples to be adjusted
 angle_corrective_mul = 2 # multiplier to adjust the eligible steering angles
@@ -123,20 +123,20 @@ def main(_):
     model.add(Cropping2D(cropping=((top_crop,bot_crop),(0,0)), input_shape=(row,col,ch)))
     model.add(Convolution2D(24,5,5, subsample=(2,2), activation="relu"))
     # model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(MaxPooling2D())
-    # model.add(Dropout(dropout_rate))
+    # model.add(MaxPooling2D())
+    model.add(Dropout(dropout_rate))
     model.add(Convolution2D(36,5,5, subsample=(2,2), activation="relu"))
-    model.add(MaxPooling2D())
-    # model.add(Dropout(dropout_rate))
+    # model.add(MaxPooling2D())
+    model.add(Dropout(dropout_rate))
     model.add(Convolution2D(48,5,5, subsample=(2,2), activation="relu"))
-    model.add(MaxPooling2D())
-    # model.add(Dropout(dropout_rate))
+    # model.add(MaxPooling2D())
+    model.add(Dropout(dropout_rate))
     model.add(Convolution2D(64,3,3, activation="relu"))
-    model.add(MaxPooling2D())
-    # model.add(Dropout(dropout_rate))
+    # model.add(MaxPooling2D())
+    model.add(Dropout(dropout_rate))
     model.add(Convolution2D(64,3,3, activation="relu"))
-    model.add(MaxPooling2D())
-    # model.add(Dropout(dropout_rate))
+    # model.add(MaxPooling2D())
+    model.add(Dropout(dropout_rate))
     model.add(Flatten())
     model.add(Dense(100))
     model.add(Dense(50))
