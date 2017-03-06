@@ -6,7 +6,8 @@ data_orig
 data_track
 data.zip
 run1
+run2
 *.h5
-!model2.h5
+!model.h5
 video*.mp4
 !video.mp4
